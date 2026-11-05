@@ -9,7 +9,7 @@ function evaluateMatch(raw,focusPuuid){
   if(!info||!Array.isArray(info.participants))throw new Error('Invalid match data');
   const duration=info.gameDuration>100000?info.gameDuration/1000:info.gameDuration;
   const mins=Math.max(1,duration/60);
-  const supported=info.mapId===11&&([400,420,430,440,490,700].includes(info.queueId)||info.gameMode==='CLASSIC');
+  const supported=info.mapId===11&&[400,420,430,440,490,700].includes(info.queueId);
   const byTeam={};
   for(const p of info.participants)(byTeam[p.teamId]||(byTeam[p.teamId]=[])).push(p);
   const players=info.participants.map(p=>{
