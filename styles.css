@@ -69,3 +69,8 @@ footer{display:flex;align-items:flex-start;justify-content:space-between;gap:35p
 
 /* Use an appropriately sized source until the HD brand asset is uploaded. */
 .hero-art>img{width:min(100%,440px);max-height:440px}
+
+/* Avoid stretching the old 256px fallback; make the new 1024px logo prominent. */
+.hero-art>img{width:min(100%,322px);max-height:322px}
+.hero-art>img.is-hires{width:min(100%,500px);max-height:500px}
+@media(max-width:850px){.hero-art>img{width:min(100%,250px);max-height:250px}.hero-art>img.is-hires{width:min(100%,300px);max-height:300px}}
