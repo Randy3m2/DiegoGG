@@ -9,7 +9,7 @@ module.exports=async function handler(req,res){
     const name=String(req.query.name||'').trim();
     const tag=String(req.query.tag||'').trim().replace(/^#/,'');
     if(!name||!tag||name.length>32||tag.length>12)throw new RiotError('Escribe Riot ID y etiqueta (#TAG).',400);
-    const account=await riot('americas','/riot/account/v1/accounts/by-riot-id/'+encodeURIComponent(name)+'/'+encodeURIComponent(tag),600000);
+    const account=await riot(region.cluster,'/riot/account/v1/accounts/by-riot-id/'+encodeURIComponent(name)+'/'+encodeURIComponent(tag),600000);
     const puuid=account.puuid;
     const settled=await Promise.allSettled([
       riot(region.platform,'/lol/summoner/v4/summoners/by-puuid/'+encodeURIComponent(puuid),300000),
