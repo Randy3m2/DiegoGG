@@ -1,8 +1,10 @@
 'use strict';
 const {riot,selectRegion,validatePuuid,RiotError,json,fail}=require('./_lib/riot');
 const {evaluateMatch}=require('./_lib/scoring');
+const {requirePrivateGroup}=require('./_lib/auth');
 module.exports=async function handler(req,res){
   if(req.method!=='GET')return json(res,{error:'Only GET supported'},405);
+  if(!requirePrivateGroup(req,res))return;
   try{
     const region=selectRegion(req.query.region);
     const puuid=validatePuuid(req.query.puuid);
