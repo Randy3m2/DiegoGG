@@ -14,3 +14,55 @@ footer{display:flex;align-items:flex-start;justify-content:space-between;gap:35p
 @media(max-width:1230px){.dashboard-grid{grid-template-columns:218px minmax(0,1fr)}.insights-col{grid-column:1/-1;grid-template-columns:repeat(3,minmax(0,1fr))}.hero h1{font-size:71px}.floating-left{left:-12px}}
 @media(max-width:850px){.topbar-inner{padding:0 18px;gap:17px;min-height:68px}.topnav{gap:14px;height:68px}.top-actions .live-pill{display:none}.brand-title{font-size:22px}.brand-icon{width:40px;height:40px}.nav-link{font-size:11px}.site-wrap{padding:0 18px}.hero{grid-template-columns:1fr;min-height:0}.hero-copy{padding:51px 0 15px}.hero-art{height:300px;max-width:450px;width:100%;margin:auto}.hero-art>img{max-height:300px}.floating-left{bottom:10px}.floating-right{top:12px}.hero h1{font-size:clamp(57px,9vw,83px)}.dashboard-grid{grid-template-columns:1fr}.sidebar-col{grid-template-columns:repeat(2,minmax(0,1fr))}.sidebar-col>.panel:last-child{grid-column:1/-1}.insights-col{grid-template-columns:repeat(2,minmax(0,1fr))}.insights-col>.tip-card{grid-column:1/-1}.champion-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:590px){.topbar-inner{gap:12px;padding:0 12px;min-height:63px}.brand-title{font-size:21px}.brand-title small{font-size:7px;letter-spacing:1.2px}.brand-icon{width:37px;height:37px}.topnav{display:none}.top-actions{margin-left:auto}.icon-button{padding:9px;font-size:11px}.site-wrap{padding:0 12px}.hero h1{font-size:64px}.hero-copy{padding-top:45px}.hero-sub{font-size:12px}.search-bar{padding:5px;min-height:57px}.search-icon{display:none}.search-bar input{padding-left:10px;font-size:11px}.search-bar select{padding:8px 2px;font-size:10px;max-width:62px}.search-bar>button{padding:12px 9px;font-size:9px;gap:3px}.search-bar>button b{display:none}.hero-under{gap:11px;font-size:10px}.hero-art{height:240px}.hero-art>img{max-height:245px}.floating-card{padding:7px 9px}.floating-card b{font-size:8px}.floating-card small{font-size:8px}.floating-card span{font-size:18px}.profile-head{gap:12px;flex-wrap:wrap}.avatar-box{width:71px;height:71px}.profile-title h2{font-size:32px}.profile-title h2 span{font-size:19px}.profile-title p{font-size:10px}.profile-controls{width:100%;justify-content:flex-end}.profile-controls button{flex:1}.tabs{gap:12px;justify-content:space-between}.tab{font-size:10px}.tag-new{display:none}.sidebar-col{grid-template-columns:1fr 1fr;gap:8px}.sidebar-col .panel-heading{padding:11px}.rank-body{padding:12px}.rank-emblem{width:39px;height:43px;font-size:23px}.rank-top b{font-size:18px}.rank-split{font-size:9px}.sidebar-col>.panel:last-child{grid-column:1/-1}.overview-stats{gap:7px;grid-template-columns:1fr 1fr}.stat-tile{padding:12px}.stat-tile b{font-size:25px}.match-main{gap:7px;padding:10px 8px}.match-result{width:55px}.match-result b{font-size:15px}.match-result small{font-size:8px}.champ-photo{width:37px;height:37px}.match-data{min-width:75px}.match-data>strong{font-size:11px}.match-data>span{font-size:9px}.match-metrics{display:none}.match-score{min-width:75px}.match-verdict{font-size:8px}.match-card{margin:8px}.panel-heading{padding:13px}.insights-col{grid-template-columns:1fr}.insights-col>.tip-card{grid-column:auto}.champion-grid{grid-template-columns:1fr;padding:10px}.tribunal-stats{grid-template-columns:1fr 1fr}.tribunal-intro{padding:19px;gap:12px}.tribunal-intro .stamp{font-size:34px}.tribunal-intro h2{font-size:29px}.case-card .case-left{min-width:0}.case-card .case-right{font-size:9px}.case-card strong{font-size:11px}.scoreboard{font-size:9px}.scoreboard .reason{display:none}.scoreboard .player-cell{min-width:90px}.scoreboard th,.scoreboard td{padding:5px 3px}footer{display:block}footer p{margin-top:10px}}
+
+
+/* Diego GG V1.1 — sharper branding, aligned rank art and interactive search */
+.search-area{position:relative;z-index:21;max-width:645px}
+.search-area .search-bar{max-width:none}
+.hero{overflow:visible}
+.hero-copy{position:relative;z-index:20}
+.hero-art>img{image-rendering:auto;object-position:center;filter:drop-shadow(0 17px 58px rgba(132,91,179,.24))}
+.brand-icon img{object-fit:cover;object-position:center}
+.floating-card{min-height:59px;justify-content:center;align-items:center;text-align:left}
+.floating-left{left:1.5%;bottom:15%}
+.floating-right{right:1.5%;top:12%}
+.player-suggestions{position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:51;
+  border:1px solid #4d5167;border-radius:12px;background:#171e2b;
+  box-shadow:0 18px 56px #000c;overflow:auto;max-height:302px;padding:6px;
+  backdrop-filter:blur(20px)}
+.suggestion-heading{padding:9px 10px 7px;color:#9caac2;letter-spacing:1.5px;
+  font-weight:900;font-size:9px;text-transform:uppercase}
+.suggestion-option{display:flex;align-items:center;gap:11px;width:100%;
+  border:none;border-radius:8px;background:transparent;color:#f1f3f8;
+  text-align:left;padding:10px;transition:background .15s}
+.suggestion-option:hover,.suggestion-option.active{background:#2d3549}
+.suggestion-avatar{height:33px;width:33px;flex-shrink:0;border-radius:8px;
+  background:#2c3043;border:1px solid #51455b;display:grid;place-items:center;
+  font:900 16px "Barlow Condensed",sans-serif;color:#f8d894}
+.suggestion-info{display:flex;flex-direction:column;flex:1;min-width:0}
+.suggestion-info b{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.suggestion-info small{font-size:10px;color:#9aa4b6}
+.suggestion-source{font-size:9px;font-weight:800;color:#efcd79;border:1px solid #665333;
+  padding:4px 6px;border-radius:5px}
+.suggestion-footer{padding:9px 10px 4px;color:#8694aa;font-size:10px;
+  border-top:1px solid #31374b;margin-top:4px}
+.rank-body{padding:14px 15px 17px}
+.rank-top{display:flex;justify-content:center;align-items:center;gap:11px;min-height:78px}
+.rank-emblem{display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  width:76px;height:76px;border-radius:0;border:none;background:transparent;
+  color:#edc66b;font-size:24px}
+.rank-emblem img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 5px 12px #0008)}
+.rank-top>div:last-child{flex:1;min-width:0}
+.rank-top b{font-size:24px;line-height:1.1}
+.rank-top small{font-size:11px;letter-spacing:.4px;margin-top:5px}
+.empty-rank{display:flex;align-items:center;justify-content:center;min-height:104px}
+@media(max-width:590px){
+  .hero{overflow:visible}
+  .search-area{max-width:100%}
+  .player-suggestions{max-height:255px}
+  .rank-top{gap:5px}
+  .rank-emblem{width:57px;height:63px}
+  .rank-top b{font-size:18px}
+  .floating-left{left:0;bottom:4%}
+  .floating-right{right:0;top:4%}
+}
