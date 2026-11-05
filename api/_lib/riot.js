@@ -23,7 +23,9 @@ function validatePuuid(raw){
 async function riot(host,path,ttl=90000){
   if(!/^[a-z0-9-]+$/.test(host)||(!Object.keys(ROUTES).map(v=>v.toLowerCase()).includes(host)&&!Object.values(ROUTES).includes(host)))throw new RiotError('Host de Riot no válido.',400);
   if(typeof path!=='string'||!path.startsWith('/')||path.startsWith('//'))throw new RiotError('Ruta inválida.',400);
-  const token=process.env.RIOT_API_KEY;
+  // Vercel env values sometimes contain accidental leading/trailing newlines.
+  // Never log or return the token.
+  const token=String(process.env.RIOT_API_KEY||'').trim();
   if(!token)throw new RiotError('Falta configurar RIOT_API_KEY en Vercel.',503);
   const url='https://'+host+'.api.riotgames.com'+path;
   const cached=cache.get(url);
