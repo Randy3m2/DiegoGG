@@ -6,14 +6,14 @@ A dark-mode League of Legends stats tracker with the **Tribunal de la Grieta**: 
 
 1. Import this GitHub repository into Vercel as an **Other** framework project.
 2. In Vercel → Project Settings → Environment Variables, create `RIOT_API_KEY` with a **new**, rotated Riot Games API key (never put keys in GitHub).
-3. Also set `DIEGO_ACCESS_CODE` to a **long, private access phrase** and share it only with your invited friends. Every visitor is prompted for it before Riot queries.
+3. (Optional) Set `DIEGO_ACCESS_CODE` to a **long, private access phrase** if you want to restrict Riot queries to friends who know the code. Without the variable, visitors are not asked for a password.
 4. Deploy. The `api/` directory contains Vercel serverless functions, and the root contains static frontend assets.
 
 This is an independent project, not endorsed by Riot Games. Performance verdicts are estimates, not proof of intent or sole blame.
 
 ## Private community
 
-For a 10–15 person group, apply for a **Personal API Key** as a private project. Riot does not permit public consumption with a personal key. Share the Vercel URL and private invite code only with the small group, and rotate any exposed Riot keys before production. The group code is checked server-side using timing-safe comparison; the browser retains it for the current session.
+For a 10–15 person group, apply for a **Personal API Key** as a private project. Riot does not permit public consumption with a personal key, including open betas. **Without `DIEGO_ACCESS_CODE` the deployed site and Riot-proxy endpoints can be accessed by anyone who learns the URL**, even if you only send the link to friends. A small intended audience does not make an unprotected URL private; ensure your deployment/access and Riot key tier match Riot's policies. If making it openly accessible, apply for a Production Key. Always rotate exposed Riot keys before production. When configured, the optional group code is checked server-side using timing-safe comparison; the browser retains it for the current session.
 
 ## Endpoints
 
@@ -21,7 +21,7 @@ For a 10–15 person group, apply for a **Personal API Key** as a private projec
 - `GET /api/player?region=LA1&name=Name&tag=TAG` account and ranked stats
 - `GET /api/history?region=LA1&puuid=...&start=0&count=6` Match-V5 history and all ten players
 
-`/api/player` and `/api/history` require a `x-diego-access-code` request header. The browser prompts for the code when needed.
+`/api/player` and `/api/history` only require the `x-diego-access-code` request header when `DIEGO_ACCESS_CODE` is configured. Without it, searches work without a password.
 
 ## Scoring
 
