@@ -36,7 +36,8 @@ async function riot(host,path,ttl=90000){
     if(!result.ok){
       if(result.status===429)throw new RiotError('Límite de Riot alcanzado. Prueba en un minuto.',429,result.headers.get('retry-after'));
       if(result.status===404)throw new RiotError('Jugador o partida no encontrados.',404);
-      if(result.status===401||result.status===403)throw new RiotError('La Riot API Key caducó o no tiene permisos.',503);
+      if(result.status===401)throw new RiotError('Riot devolvió 401: falta una API key válida. Actualiza RIOT_API_KEY en Vercel y vuelve a desplegar.',503);
+      if(result.status===403)throw new RiotError('Riot devolvió 403: la clave puede estar vencida o la ruta no autorizada. Regenera la clave en Riot Developer Portal, actualízala en Vercel y vuelve a desplegar.',503);
       throw new RiotError('Riot API devolvió '+result.status+'.',result.status>=500?502:result.status);
     }
     const value=await result.json();
