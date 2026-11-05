@@ -32,3 +32,10 @@ The performance score (12–99) is an independently designed heuristic based on 
 `npm test` (Node 20+). Live Riot requests need environment variables; demo data loads without them.
 
 © Riot Games game content and names belong to their respective owners. This product is not endorsed by Riot Games.
+
+## UX updates
+
+- Savage Mode starts ON; visitors can toggle it from the header.
+- Ranked cards use Riot Games' in-game ranked emblems via CommunityDragon's documented asset mirror. Supported tiers: Iron, Bronze, Silver, Gold, Platinum, Emerald, Diamond, Master, Grandmaster and Challenger.
+- Autocomplete suggests players from **this browser's previously searched accounts and real retrieved match participants** (stored in localStorage). The Riot API cannot search all accounts by partially typed name, so this does not pretend to provide global autocomplete. The dropdown supports arrow keys, Enter, and mouse click.
+- For crisp hero branding, upload the provided 1024px `diego-logo-hd.webp` to `assets/diego-logo-hd.webp`. Until then, the site gracefully falls back to its original logo.
