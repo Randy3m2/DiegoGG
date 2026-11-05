@@ -30,9 +30,21 @@
     $('loading-text').textContent=msg||'Escaneando la Grieta...';
     $('search-btn').disabled=!!active;$('refresh-btn').disabled=!!active;
   }
-  async function fetchJSON(url){
-    const response=await fetch(url,{headers:{Accept:'application/json'}});
+  async function fetchJSON(url,retried=false){
+    const headers={Accept:'application/json'};
+    try{
+      const code=sessionStorage.getItem('diego-access-code');
+      if(code&&url.startsWith('/api/')&&url!=='/api/status')headers['x-diego-access-code']=code;
+    }catch(e){}
+    const response=await fetch(url,{headers});
     let body={};try{body=await response.json();}catch(e){}
+    if(response.status===401&&body.authRequired&&!retried){
+      const code=window.prompt('👑 Diego GG es privado. Introduce el código de acceso de tu grupo:');
+      if(code&&code.trim()){
+        try{sessionStorage.setItem('diego-access-code',code.trim());}catch(e){}
+        return fetchJSON(url,true);
+      }
+    }
     if(!response.ok)throw new Error(body.error||'Error HTTP '+response.status);
     return body;
   }
