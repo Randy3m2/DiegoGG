@@ -6,6 +6,7 @@
   const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
   const teams=['TOP','JUNGLE','MIDDLE','BOTTOM','UTILITY'];
   const roleLabel={TOP:'TOP',JUNGLE:'JG',MIDDLE:'MID',BOTTOM:'ADC',UTILITY:'SUP'};
+  const queueNames={420:'Ranked Solo',440:'Ranked Flex',400:'Normal Draft',430:'Normal Blind',490:'Quickplay',700:'Clash',450:'ARAM'};
   const regionName={LA1:'LAN',LA2:'LAS',NA1:'NA',EUW1:'EUW',EUN1:'EUNE',BR1:'BR',KR:'KR',JP1:'JP',TR1:'TR',OC1:'OCE'};
   const state={demo:true,profile:null,matches:[],nextStart:0,hasMore:false,filter:'all',tab:'overview',expanded:-1,caseExpanded:-1,savage:false,loading:false,version:'16.21.1'};
   const champAlias={Fiddlesticks:'Fiddlesticks',Wukong:'MonkeyKing',Nunu:'Nunu',RenataGlasc:'Renata',BelVeth:'Belveth',KhaZix:'Khazix',ChoGath:'Chogath',KaiSa:'Kaisa',LeBlanc:'Leblanc',VelKoz:'Velkoz',KogMaw:'KogMaw'};
@@ -228,7 +229,7 @@
     const win=p.win,score=p.score;
     return '<article class="match-card '+(win?'':'defeat')+'">'+
       '<div class="match-main" data-expand="'+idx+'" role="button" tabindex="0" aria-expanded="'+(idx===state.expanded)+'">'+
-        '<div class="match-result"><b>'+(win?'VICTORY':'DEFEAT')+'</b><small>'+(m.queueId===440?'Ranked Flex':'Ranked Solo')+'<br>'+when(m.gameCreation)+'</small></div>'+
+        '<div class="match-result"><b>'+(win?'VICTORY':'DEFEAT')+'</b><small>'+(queueNames[m.queueId]||m.gameMode||'Game')+'<br>'+when(m.gameCreation)+'</small></div>'+
         imageTag(championImage(p.champion,m),'champ-photo',p.champion)+
         '<div class="match-data"><strong>'+esc(p.champion)+'</strong><span><span class="kda">'+p.kills+' / '+p.deaths+' / '+p.assists+'</span><br>'+p.kp+'% KP · '+duration(m.duration)+'</span></div>'+
         '<div class="match-metrics"><span>'+fmt(p.cs)+' CS ('+p.csMin+'/min)</span><span>'+fmt(p.damage)+' damage</span></div>'+
@@ -240,7 +241,7 @@
   function matchDetails(m){
     const suspects=(m.verdict.candidates||[]).map(id=>findPlayer(m,id)).filter(Boolean);
     const isSupported=m.supported;
-    const head='<div class="detail-title"><div><b>⚖ '+esc(m.verdict.label)+'</b><div><small>Match ID: '+esc(m.matchId)+' · '+duration(m.duration)+'</small></div></div><small>'+esc(m.queueId===420?'SOLO/DUO':'SUMMONER\'S RIFT')+'</small></div>';
+    const head='<div class="detail-title"><div><b>⚖ '+esc(m.verdict.label)+'</b><div><small>Match ID: '+esc(m.matchId)+' · '+duration(m.duration)+'</small></div></div><small>'+esc(queueNames[m.queueId]||'SUMMONER\'S RIFT')+'</small></div>';
     const investigation='<div class="investigation"><b>'+(isSupported?'VEREDICTO ESTADÍSTICO':'ANÁLISIS NO DISPONIBLE')+'</b>'+
       '<p>'+esc(m.verdict.note)+'</p><div class="suspects">'+
       (suspects.length?suspects.map(p=>'<span class="suspect">⚠ '+esc(p.name)+' · '+p.score+'/100</span>').join(''):
