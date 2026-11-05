@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#090c15">
+  <meta name="description" content="Diego GG: estadísticas de League of Legends y el Tribunal de la Grieta. Descubre cómo jugó cada invocador.">
+  <title>Diego GG — El Tribunal de la Grieta</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://ddragon.leagueoflegends.com">
+  <link rel="stylesheet" href="/styles.css">
+  <script defer src="/app.js"></script>
+</head>
+<body>
+  <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="/" class="brand" aria-label="Diego GG inicio">
+        <span class="brand-icon"><img src="/assets/diego-logo.webp" alt="" onerror="this.style.display='none'"><span class="brand-fallback">D</span></span>
+        <span class="brand-title">DIEGO<span>GG</span><small>THE GOAT TRACKER</small></span>
+      </a>
+      <nav class="topnav" aria-label="Navegación">
+        <a class="nav-link active" href="#overview" data-nav="overview">Overview</a>
+        <a class="nav-link" href="#champions" data-nav="champions">Champions</a>
+        <a class="nav-link" href="#tribunal" data-nav="tribunal">El Tribunal <span class="nav-fire">🔥</span></a>
+      </nav>
+      <div class="top-actions">
+        <span class="live-pill" id="server-pill"><span class="live-dot"></span> RIOT API</span>
+        <button id="savage-btn" class="icon-button" type="button" aria-pressed="false" title="Cambiar modo troll">😈 <span>Savage OFF</span></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="site-wrap">
+    <section class="hero" id="hero">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="eyebrow-mark">✦</span> LEAGUE OF LEGENDS STATS, SIN FILTRO</div>
+        <h1>Los números<br>no <em>mienten.</em><br><span>Tu equipo sí.</span></h1>
+        <p class="hero-sub">El tracker que analiza a los 10 jugadores, encuentra a los sospechosos y te dice quién tuvo una mala partida. Con datos, no con excusas.</p>
+        <form class="search-bar" id="search-form">
+          <div class="search-icon">⌕</div>
+          <label for="riot-id" class="sr-only">Riot ID</label>
+          <input id="riot-id" name="riot-id" placeholder="Riot ID (ej. Faker#KR1)" autocomplete="off" maxlength="48" required>
+          <label for="region" class="sr-only">Región</label>
+          <select id="region" aria-label="Región">
+            <option value="LA1">LAN</option><option value="LA2">LAS</option><option value="NA1">NA</option>
+            <option value="EUW1">EUW</option><option value="EUN1">EUNE</option><option value="BR1">BR</option>
+            <option value="KR">KR</option><option value="JP1">JP</option><option value="TR1">TR</option><option value="OC1">OCE</option>
+          </select>
+          <button type="submit" id="search-btn"><span>SCAN PLAYER</span><b>↗</b></button>
+        </form>
+        <div class="hero-under"><span>⚡ Stats oficiales de Riot Games</span><span>👑 Tribunal por partida</span><button type="button" id="demo-btn">Ver demo ↗</button></div>
+      </div>
+      <div class="hero-art">
+        <div class="hero-art-glow"></div>
+        <img src="/assets/diego-logo.webp" alt="Diego GG: rey y cabra coronada" onerror="this.style.display='none'">
+        <div class="floating-card floating-left"><span>⚠</span><div><b>TEAM DIFF DETECTED</b><small>Multiple suspects found</small></div></div>
+        <div class="floating-card floating-right"><span>👑</span><div><b>THE GOAT</b><small>Officially built different</small></div></div>
+      </div>
+    </section>
+
+    <div id="banner" class="notice hidden" role="status"></div>
+    <div id="loading" class="loading hidden"><span class="loader"></span><span id="loading-text">Escaneando la Grieta...</span></div>
+    <section id="workspace" class="workspace hidden">
+      <div class="section-topline"><span>PLAYER INTELLIGENCE</span><span id="update-time">MATCH HISTORY</span></div>
+      <div class="profile-head">
+        <div class="avatar-box"><img id="profile-avatar" src="" alt="Icono de invocador"><span class="level-chip" id="level-chip">--</span></div>
+        <div class="profile-title">
+          <div class="profile-badges"><span class="label-chip">SUMMONER PROFILE</span><span class="label-chip subtle" id="demo-chip">LIVE DATA</span></div>
+          <h2 id="player-name">Diego <span>#GOAT</span></h2>
+          <p id="player-subtitle">LAN · Ranking y análisis de partidas</p>
+        </div>
+        <div class="profile-controls"><button class="secondary-btn" type="button" id="refresh-btn">↻ &nbsp; Update</button><button class="secondary-btn" type="button" id="share-btn">↗ &nbsp; Share</button></div>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Secciones del perfil">
+        <button class="tab active" data-tab="overview" role="tab" aria-selected="true">◈ &nbsp; Overview</button>
+        <button class="tab" data-tab="champions" role="tab" aria-selected="false">♛ &nbsp; Champions</button>
+        <button class="tab" data-tab="tribunal" role="tab" aria-selected="false">⚖ &nbsp; El Tribunal <span class="tag-new">TROLL MODE</span></button>
+      </div>
+
+      <div id="overview" class="tab-panel">
+        <div class="dashboard-grid">
+          <aside class="sidebar-col">
+            <div class="panel"><div class="panel-heading"><h3>RANKED SOLO/DUO</h3><span class="muted">S2026</span></div><div id="solo-rank"></div></div>
+            <div class="panel"><div class="panel-heading"><h3>RANKED FLEX</h3><span class="muted">S2026</span></div><div id="flex-rank"></div></div>
+            <div class="panel"><div class="panel-heading"><h3>TOP CHAMPIONS</h3><span class="muted">Recientes</span></div><div id="mini-champions"></div></div>
+          </aside>
+          <div class="main-col">
+            <div class="overview-stats" id="overview-stats"></div>
+            <div class="panel match-panel">
+              <div class="panel-heading match-heading"><div><h3>MATCH HISTORY</h3><p>El historial no perdona a nadie.</p></div>
+                <div class="filter-controls"><select id="match-filter" aria-label="Filtrar partidas"><option value="all">All games</option><option value="wins">Victories</option><option value="losses">Defeats</option></select><button id="reload-btn" class="tiny-button" type="button" title="Actualizar">↻</button></div>
+              </div>
+              <div class="match-list" id="match-list"></div>
+              <div class="load-more"><button id="load-more" class="secondary-btn" type="button">Load more matches ↓</button></div>
+            </div>
+          </div>
+          <aside class="insights-col">
+            <div class="panel verdict-panel"><div class="panel-heading"><h3>⚖ THE TRIBUNAL</h3><span class="label-chip hot">HOT</span></div><div id="tribunal-preview"></div></div>
+            <div class="panel"><div class="panel-heading"><h3>📊 PLAYER PULSE</h3></div><div id="player-pulse"></div></div>
+            <div class="tip-card"><span>🐐</span><div><b>NO EXCUSES, JUST DATA.</b><p>El score es estimado y contextual. Jugar mal no equivale a trolear intencionalmente.</p></div></div>
+          </aside>
+        </div>
+      </div>
+
+      <div id="champions" class="tab-panel hidden">
+        <div class="panel content-panel"><div class="panel-heading"><div><h3>CHAMPION PERFORMANCE</h3><p>Tus picks favoritos, tus números reales.</p></div><span class="label-chip">RECENT MATCHES</span></div><div id="champion-grid" class="champion-grid"></div></div>
+      </div>
+      <div id="tribunal" class="tab-panel hidden">
+        <div class="tribunal-intro"><span class="stamp">⚖</span><div><div class="eyebrow">POST-MATCH INVESTIGATION</div><h2>EL TRIBUNAL <em>DE LA GRIETA</em></h2><p>Veredictos basados en indicadores observables, no certezas sobre quién causó una derrota. Pueden aparecer varios sospechosos.</p></div></div>
+        <div class="tribunal-stats" id="tribunal-stats"></div>
+        <div class="panel content-panel"><div class="panel-heading"><div><h3>EXPEDIENTES RECIENTES</h3><p>Abre cualquier caso para ver el score de los diez jugadores.</p></div></div><div id="tribunal-cases"></div></div>
+      </div>
+    </section>
+    <footer><div><strong>DIEGO<span>GG</span></strong> · Built for the memes. Backed by the numbers.</div><p>Diego GG es independiente y no está respaldado por Riot Games. League of Legends y su contenido pertenecen a Riot Games. Los análisis son estimaciones estadísticas, nunca pruebas de conducta intencional.</p></footer>
+  </main>
+  <div id="toast" class="toast hidden" role="status"></div>
+</body>
+</html>
