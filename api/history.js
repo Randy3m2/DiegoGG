@@ -18,7 +18,7 @@ module.exports=async function handler(req,res){
         const idx=current++;
         try{
           const match=await riot(region.cluster,'/lol/match/v5/matches/'+encodeURIComponent(ids[idx]),3600000);
-          matches[idx]=evaluateMatch(match,puuid);
+          if(match&&match.info&&match.info.queueId!==0)matches[idx]=evaluateMatch(match,puuid);
         }catch(e){
           if(e instanceof RiotError&&(e.status===429||e.status===503))throw e;
           matches[idx]=null;
