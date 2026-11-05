@@ -8,7 +8,95 @@
   const roleLabel={TOP:'TOP',JUNGLE:'JG',MIDDLE:'MID',BOTTOM:'ADC',UTILITY:'SUP'};
   const queueNames={420:'Ranked Solo',440:'Ranked Flex',400:'Normal Draft',430:'Normal Blind',490:'Quickplay',700:'Clash',450:'ARAM'};
   const regionName={LA1:'LAN',LA2:'LAS',NA1:'NA',EUW1:'EUW',EUN1:'EUNE',BR1:'BR',KR:'KR',JP1:'JP',TR1:'TR',OC1:'OCE'};
-  const state={demo:true,profile:null,matches:[],nextStart:0,hasMore:false,filter:'all',tab:'overview',expanded:-1,caseExpanded:-1,savage:false,loading:false,version:'16.21.1'};
+  const state={demo:true,profile:null,matches:[],nextStart:0,hasMore:false,filter:'all',tab:'overview',expanded:-1,caseExpanded:-1,savage:true,loading:false,version:'16.21.1'};
+  // Suggestions are based on previous real searches in this browser and participants
+  // from downloaded matches. Riot has no partial-name account search endpoint.
+  const RECENTS_KEY='diego-gg-players-v1';
+  const knownPlayers=[];
+  let suggestionsVisible=false;
+  let highlightedSuggestion=-1;
+  let currentSuggestions=[];
+  function storeKnownPlayers(){
+    try{localStorage.setItem(RECENTS_KEY,JSON.stringify(knownPlayers.slice(0,90)));}catch(e){}
+  }
+  function loadKnownPlayers(){
+    try{
+      const loaded=JSON.parse(localStorage.getItem(RECENTS_KEY)||'[]');
+      if(Array.isArray(loaded))for(const x of loaded.slice(0,90)){
+        if(x&&typeof x.name==='string'&&typeof x.tag==='string'&&typeof x.region==='string'
+          &&x.name.length<=32&&x.tag.length<=12&&x.name.length>0&&x.tag.length>0)knownPlayers.push(x);
+      }
+    }catch(e){}
+  }
+  function rememberPlayer(player,origin){
+    if(!player||!player.name||!player.tag||!player.region||origin==='demo')return;
+    const name=String(player.name).trim(),tag=String(player.tag).trim().replace(/^#/,'');
+    const region=String(player.region).toUpperCase();
+    if(!name||!tag||name.length>32||tag.length>12||!regionName[region])return;
+    const key=(name+'#'+tag+'@'+region).toLowerCase();
+    const at=knownPlayers.findIndex(x=>(x.name+'#'+x.tag+'@'+x.region).toLowerCase()===key);
+    if(at!==-1)knownPlayers.splice(at,1);
+    knownPlayers.unshift({name,tag,region,origin:origin||'recent'});
+    knownPlayers.length=Math.min(knownPlayers.length,90);
+    storeKnownPlayers();
+  }
+  function rememberMatchPlayers(matches,region){
+    if(!Array.isArray(matches))return;
+    const players=[];
+    for(const match of matches)for(const p of (match.players||[])){
+      if(p&&p.name&&p.tag)players.push({name:p.name,tag:p.tag,region});
+    }
+    // Insert oldest first, keeping the most recent participants at the top.
+    for(const p of players.slice(0,60).reverse())rememberPlayer(p,'match');
+  }
+  function hideSuggestions(){
+    suggestionsVisible=false;highlightedSuggestion=-1;currentSuggestions=[];
+    $('player-suggestions').classList.add('hidden');
+    $('riot-id').setAttribute('aria-expanded','false');
+    $('riot-id').removeAttribute('aria-activedescendant');
+  }
+  function showSuggestions(){
+    const field=$('riot-id'),query=field.value.trim().toLowerCase();
+    currentSuggestions=knownPlayers.filter(p=>
+      !query||(p.name+'#'+p.tag).toLowerCase().includes(query)
+      ||p.name.toLowerCase().startsWith(query)
+    ).sort((a,b)=>{
+      const exactRegion=$('region').value;
+      return Number(b.region===exactRegion)-Number(a.region===exactRegion);
+    }).slice(0,7);
+    const panel=$('player-suggestions');
+    highlightedSuggestion=-1;
+    if(!suggestionsVisible||(!query&&!knownPlayers.length)){hideSuggestions();return;}
+    const items=currentSuggestions.map((p,i)=>
+      '<button type="button" role="option" aria-selected="false" id="player-option-'+i+'" class="suggestion-option" data-suggestion="'+i+'">'+
+      '<span class="suggestion-avatar">♛</span><span class="suggestion-info"><b>'+esc(p.name)+' <span class="muted">#'+esc(p.tag)+'</span></b>'+
+      '<small>'+(p.origin==='match'?'Encontrado en partidas':'Búsqueda reciente')+'</small></span>'+
+      '<span class="suggestion-source">'+esc(regionName[p.region]||p.region)+'</span></button>'
+    ).join('');
+    panel.innerHTML='<div class="suggestion-heading">'+(currentSuggestions.length?'Jugadores conocidos':'No hay coincidencias guardadas')+'</div>'+
+      (items||'<div class="suggestion-footer">Busca por Nombre#TAG para añadir un jugador al historial de sugerencias.</div>')+
+      (items?'<div class="suggestion-footer">↑ ↓ para elegir · Enter para buscar</div>':'');
+    panel.classList.remove('hidden');
+    field.setAttribute('aria-expanded','true');
+  }
+  function highlightSuggestion(index){
+    if(!currentSuggestions.length)return;
+    highlightedSuggestion=(index+currentSuggestions.length)%currentSuggestions.length;
+    $('player-suggestions').querySelectorAll('.suggestion-option').forEach((el,i)=>{
+      const active=i===highlightedSuggestion;
+      el.classList.toggle('active',active);
+      el.setAttribute('aria-selected',String(active));
+    });
+    $('riot-id').setAttribute('aria-activedescendant','player-option-'+highlightedSuggestion);
+  }
+  function chooseSuggestion(index){
+    const choice=currentSuggestions[index];if(!choice)return false;
+    $('riot-id').value=choice.name+'#'+choice.tag;
+    $('region').value=choice.region;
+    hideSuggestions();
+    return true;
+  }
+  loadKnownPlayers();
   const champAlias={Fiddlesticks:'Fiddlesticks',Wukong:'MonkeyKing',Nunu:'Nunu',RenataGlasc:'Renata',BelVeth:'Belveth',KhaZix:'Khazix',ChoGath:'Chogath',KaiSa:'Kaisa',LeBlanc:'Leblanc',VelKoz:'Velkoz',KogMaw:'KogMaw'};
   function patch(m){const v=m&&m.gameVersion;if(v){const p=v.split('.');if(p.length>=2)return p[0]+'.'+p[1]+'.1';}return state.version;}
   function championImage(champion,match){
@@ -57,16 +145,19 @@
     const name=input.slice(0,index).trim(),tag=input.slice(index+1).trim();
     const region=$('region').value;
     if(!name||!tag){showMessage('Necesitas el nombre y el #TAG.');return;}
+    hideSuggestions();
     setLoading(true,'Buscando cuenta y ranking en Riot...');
     setBanner('',false);
     try{
       const player=await fetchJSON('/api/player?region='+encodeURIComponent(region)+'&name='+encodeURIComponent(name)+'&tag='+encodeURIComponent(tag));
       state.profile=player;
+      rememberPlayer(player,'recent');
       state.demo=false;state.matches=[];state.nextStart=0;state.hasMore=false;state.expanded=-1;
       history.replaceState(null,'','/?name='+encodeURIComponent(name)+'&tag='+encodeURIComponent(tag)+'&region='+encodeURIComponent(region));
       setLoading(true,'Analizando los últimos enfrentamientos...');
       const recent=await fetchJSON('/api/history?region='+encodeURIComponent(region)+'&puuid='+encodeURIComponent(player.puuid)+'&count=6');
       state.matches=recent.matches||[];
+      rememberMatchPlayers(state.matches,region);
       state.nextStart=recent.nextStart||0;
       state.hasMore=recent.hasMore;
       renderAll();
@@ -87,6 +178,7 @@
       const more=await fetchJSON('/api/history?region='+encodeURIComponent(p.region)+'&puuid='+encodeURIComponent(p.puuid)+'&start='+state.nextStart+'&count=6');
       const known=new Set(state.matches.map(x=>x.matchId));
       state.matches.push(...(more.matches||[]).filter(m=>!known.has(m.matchId)));
+      rememberMatchPlayers(more.matches||[],p.region);
       state.nextStart=more.nextStart;
       state.hasMore=more.hasMore;
       renderAll();
@@ -155,11 +247,20 @@
     setBanner('DEMO · Estos jugadores y resultados son ficticios. Introduce un Riot ID para consultar datos oficiales.',true);
     renderAll();
   }
+  function rankImage(tier){
+    const ranks=new Set(['IRON','BRONZE','SILVER','GOLD','PLATINUM','EMERALD','DIAMOND','MASTER','GRANDMASTER','CHALLENGER']);
+    const safe=String(tier||'').toUpperCase();
+    return ranks.has(safe)
+      ?'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-emblem/emblem-'+safe.toLowerCase()+'.png'
+      :'/assets/favicon.svg';
+  }
   function rankMarkup(queue){
     if(!queue)return '<div class="empty-rank">Unranked · Sin clasificación registrada.</div>';
     const total=queue.wins+queue.losses;
-    return '<div class="rank-body"><div class="rank-top"><div class="rank-emblem">◆</div><div><b>'+
-      esc(queue.tier+' '+queue.rank)+'</b><small>'+fmt(queue.lp)+' LP</small></div></div>'+
+    const rankText=queue.tier+(queue.rank&&queue.rank!=='I'&&['MASTER','GRANDMASTER','CHALLENGER'].includes(queue.tier)?'':queue.rank?' '+queue.rank:'');
+    return '<div class="rank-body"><div class="rank-top"><div class="rank-emblem">'+
+      imageTag(rankImage(queue.tier),'',queue.tier+' ranked emblem')+
+      '</div><div><b>'+esc(rankText)+'</b><small>'+fmt(queue.lp)+' LP</small></div></div>'+
       '<div class="rank-split"><span>'+fmt(queue.wins)+'W <span class="muted">/</span> '+fmt(queue.losses)+'L</span><strong>'+winRate(queue.wins,total)+'% WR</strong></div>'+
       '<div class="winbar"><i style="width:'+winRate(queue.wins,total)+'%"></i></div></div>';
   }
@@ -345,6 +446,31 @@
     $('region').value=state.profile.region;
     await scan();
   }
+  $('riot-id').addEventListener('focus',()=>{
+    suggestionsVisible=true;showSuggestions();
+  });
+  $('riot-id').addEventListener('input',()=>{
+    suggestionsVisible=true;showSuggestions();
+  });
+  $('riot-id').addEventListener('keydown',e=>{
+    if(e.key==='Escape'){hideSuggestions();return;}
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+      if(!suggestionsVisible){suggestionsVisible=true;showSuggestions();}
+      if(currentSuggestions.length){e.preventDefault();highlightSuggestion(highlightedSuggestion+(e.key==='ArrowDown'?1:-1));}
+    }else if(e.key==='Enter'&&highlightedSuggestion>=0){
+      e.preventDefault();
+      if(chooseSuggestion(highlightedSuggestion))scan();
+    }
+  });
+  $('region').addEventListener('change',()=>{if(suggestionsVisible)showSuggestions();});
+  $('player-suggestions').addEventListener('mousedown',e=>e.preventDefault());
+  $('player-suggestions').addEventListener('click',e=>{
+    const option=e.target.closest('[data-suggestion]');
+    if(option&&chooseSuggestion(Number(option.dataset.suggestion)))scan();
+  });
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('.search-area'))hideSuggestions();
+  });
   $('search-form').addEventListener('submit',e=>{e.preventDefault();scan();});
   $('demo-btn').addEventListener('click',()=>{loadDemo();$('workspace').scrollIntoView({behavior:'smooth'});});
   $('refresh-btn').addEventListener('click',refresh);
