@@ -1,0 +1,13 @@
+{
+  "name": "diego-gg",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LoL match stats and Tribunal de la Grieta",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "start": "npx vercel dev"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
