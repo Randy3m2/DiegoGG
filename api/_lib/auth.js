@@ -3,10 +3,8 @@ const crypto=require('node:crypto');
 const {json}=require('./riot');
 function requirePrivateGroup(req,res){
   const configured=process.env.DIEGO_ACCESS_CODE||'';
-  if(!configured){
-    json(res,{error:'Configura DIEGO_ACCESS_CODE en Vercel para restringir acceso a tu grupo privado.'},503);
-    return false;
-  }
+  // Access protection is opt-in: unset DIEGO_ACCESS_CODE means no group passcode.
+  if(!configured)return true;
   const candidate=String(req.headers['x-diego-access-code']||'');
   const a=Buffer.from(configured,'utf8'),b=Buffer.from(candidate,'utf8');
   if(a.length===0||a.length!==b.length||!crypto.timingSafeEqual(a,b)){
