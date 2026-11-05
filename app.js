@@ -257,7 +257,9 @@
   function rankMarkup(queue){
     if(!queue)return '<div class="empty-rank">Unranked · Sin clasificación registrada.</div>';
     const total=queue.wins+queue.losses;
-    const rankText=queue.tier+(queue.rank&&queue.rank!=='I'&&['MASTER','GRANDMASTER','CHALLENGER'].includes(queue.tier)?'':queue.rank?' '+queue.rank:'');
+    const tier=String(queue.tier||'').toUpperCase();
+    const apex=['MASTER','GRANDMASTER','CHALLENGER'].includes(tier);
+    const rankText=tier+(apex||!queue.rank?'':' '+queue.rank);
     return '<div class="rank-body"><div class="rank-top"><div class="rank-emblem">'+
       imageTag(rankImage(queue.tier),'',queue.tier+' ranked emblem')+
       '</div><div><b>'+esc(rankText)+'</b><small>'+fmt(queue.lp)+' LP</small></div></div>'+
